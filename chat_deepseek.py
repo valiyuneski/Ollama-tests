@@ -90,7 +90,7 @@ def get_user_prompt_as_chain_of_thought(query_text:str)->str:
 def main():
     # Send a message to DeepSeek
     #prompt = "Hello! Can you explain what you are in one sentence?"
-    default_query_input = "Write a button class in wxWidgets and in Qt, use C++17 with lambda"
+    default_query_input = "Write a button class in wxImageButtonFrame and in Qt, use C++17 with lambda"
     prompt = get_user_prompt_as_chain_of_thought(default_query_input)
     print(f"User: {prompt}\n")
     
