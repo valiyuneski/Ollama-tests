@@ -1,0 +1,176 @@
+#include <QPushButton>
+#include <QWidget>
+#include <QMessageBox>
+class qtButton : public QPushButton {
+    Q_OBJECT
+    public:
+    explicit qtButton(QWidget* parent = Q_NULLPTR) : QPushButton("Click Me", parent) {
+        connect(this, &QPushButton::clicked, this, [this]() {
+            QMessageBox::information(this, "Info", "Button Clicked!");
+        });
+    }
+};
+
+#include <QCheckBox>
+#include <QMessageBox>
+#include <QVBoxLayout>
+#include <QWidget>
+class qtCheckboxWidget : public QWidget {
+    Q_OBJECT
+    public:
+    explicit qtCheckboxWidget(QWidget* parent = nullptr) : QWidget(parent) {
+        auto layout = new QVBoxLayout(this);
+        auto checkbox = new QCheckBox("Check Me", this);
+        connect(checkbox, &QCheckBox::toggled, [=](bool checked) {
+            QMessageBox::information(this, "Info", checked ? "Checked!" : "Unchecked!");
+        });
+        layout->addWidget(checkbox);
+        setLayout(layout);
+        show();
+    }
+};
+
+#include <QListWidget>
+#include <QPainter>
+#include <QStyleOption>
+class qtOwnerDrawnListWidget : public QListWidget {
+    Q_OBJECT
+    public:
+    explicit qtOwnerDrawnListWidget(QWidget* parent = nullptr) : QListWidget(parent) {
+        setItemDelegate(this);
+    }
+    protected:
+    void paintItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        QRect rect = option.rect;
+        painter->fillRect(rect, Qt::white);
+        painter->setPen(Qt::black);
+        painter->drawText(rect.adjusted(5, 5, -5, -5), Qt::AlignLeft | Qt::AlignVCenter, index.data().toString());
+        painter->restore();
+    }
+};
+
+#include <QApplication>
+#include <QHeaderView>
+#include <Q QTreeWidgetItem>
+#include <QTreeWidget>
+#include <QVBoxLayout>
+#include <QWidget>
+class qtTreeWidget : public QWidget {
+    Q_OBJECT
+    public:
+    explicit qtTreeWidget(QWidget* parent = Q_NULLPTR) : QWidget(parent) {
+        auto layout = new QVBoxLayout(this);
+        auto treeWidget = new QTreeWidget(this);
+        treeWidget->setColumnCount(1);
+        treeWidget->setHeaderLabels(QStringList(tr("Items")));
+        auto rootItem = new QTreeWidgetItem(treeWidget, QStringList(tr("Root Node")));
+        auto childItem1 = new QTreeWidgetItem(rootItem, QStringList(tr("Child 1")));
+        auto childItem2 = new QTreeWidgetItem(rootItem, QStringList(tr("Child 2")));
+        new QTreeWidgetItem(childItem1, QStringList(tr("Grandchild 1.1")));
+        treeWidget->expandAll();
+        connect(treeWidget, &QTreeWidget::itemClicked, this, [=](QTreeWidgetItem* item, int column) {
+            QMessageBox::information(this, tr("Tree Selection"), tr("Selected: %1").arg(item->text(column)));
+        });
+        layout->addWidget(treeWidget);
+        setLayout(layout);
+    }
+};
+
+#include <QLabel>
+#include <QMouseEvent>
+class qtClickableLabel : public QLabel {
+    Q_OBJECT
+    public:
+    explicit qtClickableLabel(QWidget* parent = Q_NULLPTR)
+    : QLabel(parent) {
+        connect(this, &qtClickableLabel::mousePressEvent, this, [=](QMouseEvent* event) {
+            emit sigClicked();
+            QTimer::singleShot(50, this, [this]() {
+                setFocus(Qt::MouseFocusReason);
+            });
+        });
+    }
+    signals:
+    void sigClicked();
+};
+
+#include <QWidget>
+#include <QRadioButton>
+#include <QVBoxLayout>
+#include <QMessageBox>
+class RadioButtonWidget : public QWidget {
+    Q_OBJECT
+    public:
+    explicit RadioButtonWidget(QWidget* parent = nullptr) : QWidget(parent) {
+        auto layout = new QVBoxLayout(this);
+        auto radio1 = new QRadioButton("Option 1", this);
+        auto radio2 = new QRadioButton("Option 2", this);
+        auto radio3 = new QRadioButton("Option 3", this);
+        radio1->setChecked(true);
+        layout->addWidget(radio1);
+        layout->addWidget(radio2);
+        layout->addWidget(radio3);
+        connect(radio1, &QRadioButton::toggled, this, [=](bool checked) {
+            if (checked) {
+                QMessageBox::information(this, "Info", "Option 1 Selected!");
+            }
+        });
+        connect(radio2, &QRadioButton::toggled, this, [=](bool checked) {
+            if (checked) {
+                QMessageBox::information(this, "Info", "Option 2 Selected!");
+            }
+        });
+        connect(radio3, &QRadioButton::toggled, this, [=](bool checked) {
+            if (checked) {
+                QMessageBox::information(this, "Info", "Option 3 Selected!");
+            }
+        });
+        setLayout(layout);
+        setWindowTitle("Radio Button Example");
+        resize(200, 150);
+        show();
+    }
+};
+
+#include <QLabel>
+#include <QMouseEvent>
+#include <QPixmap>
+class qtImageLabel : public QLabel {
+    Q_OBJECT
+    public:
+    explicit qtImageLabel(const QPixmap& pixmap, QWidget* parent = nullptr)
+    : QLabel(parent) {
+        setPixmap(pixmap);
+        setScaledContents(true);
+        connect(this, &qtImageLabel::sigClicked, this, [=]() {
+            QMessageBox::information(this, "Info", "Image Clicked!");
+        });
+    }
+    signals:
+    void sigClicked();
+    protected:
+    void mousePressEvent(QMouseEvent*) override {
+        emit sigClicked();
+    }
+};
+
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QMessageBox>
+class qtImageButtonWidget : public QWidget {
+    Q_OBJECT
+    public:
+    qtImageButtonWidget(QWidget* parent = nullptr) : QWidget(parent) {
+        auto layout = new QVBoxLayout(this);
+        auto imgBtn = new QPushButton(this);
+        imgBtn->setIcon(QIcon("path/to/image.png"));
+        imgBtn->setIconSize(QSize(64, 64));
+        connect(imgBtn, &QPushButton::clicked, this, [=]() {
+            QMessageBox::information(this, "Info", "Image Button Clicked!");
+        });
+        layout->addWidget(imgBtn);
+        setLayout(layout);
+    }
+};

@@ -1,0 +1,146 @@
+#include <wx/wx.h>
+class wxButtonFrame : public wxFrame {
+    public:
+    wxButtonFrame() : wxFrame(nullptr, wxID_ANY, "Button Example") {
+        auto sizer = new wxBoxSizer(wxHORIZONTAL);
+        auto btn = new wxButton(this, wxID_ANY, "Click Me");
+        btn->Bind(wxEVT_BUTTON, [=](wxCommandEvent&) {
+            wxMessageBox("Button Clicked!", "Info", wxOK | wxICON_INFORMATION, this);
+        });
+        sizer->Add(btn, wxSizerFlags().Border().Centre());
+        SetSizerAndFit(sizer);
+        Show(true);
+    }
+};
+
+#include <wx/wx.h>
+class wxCheckboxFrame : public wxFrame {
+    public:
+    wxCheckboxFrame() : wxFrame(nullptr, wxID_ANY, "Checkbox Example") {
+        auto sizer = new wxBoxSizer(wxHORIZONTAL);
+        auto checkbox = new wxCheckBox(this, wxID_ANY, "Check Me");
+        checkbox->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) {
+            wxMessageBox(checkbox->IsChecked() ? "Checked!" : "Unchecked!", "Info", wxOK | wxICON_INFORMATION, this);
+        });
+        sizer->Add(checkbox, wxSizerFlags().Border().Centre());
+        SetSizerAndFit(sizer);
+        Show(true);
+    }
+};
+
+#include <wx/wx.h>
+#include <wx/listbox.h>
+#include <wx/dcclient.h>
+class wxOwnerDrawnListBox : public wxListBox {
+    public:
+    wxOwnerDrawnListBox(wxWindow* parent) : wxListBox(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_OWNERDRAW) {
+        Append("Item 1");
+        Append("Item 2");
+        Append("Item 3");
+    }
+    protected:
+    void DrawItem(wxDC* dc, const wxRect& rect, size_t n) const override {
+        dc->SetBrush(*wxLIGHT_GREY_BRUSH);
+        dc->DrawRectangle(rect);
+        dc->DrawText(GetString(n), rect.GetX() + 5, rect.GetY() + 5);
+    }
+    wxCoord GetItemHeight(size_t n) const override {
+        return 30;
+    }
+};
+
+#include <wx/wx.h>
+#include <wx/treectrl.h>
+class wxTreeFrame : public wxFrame {
+    public:
+    wxTreeFrame() : wxFrame(nullptr, wxID_ANY, "Tree Example") {
+        auto panel = new wxPanel(this);
+        auto sizer = new wxBoxSizer(wxVERTICAL);
+        auto tree = new wxTreeCtrl(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE);
+        auto root = tree->AddRoot("Root Node");
+        auto child1 = tree->AppendItem(root, "Child 1");
+        auto child2 = tree->AppendItem(root, "Child 2");
+        tree->AppendItem(child1, "Grandchild 1.1");
+        tree->Bind(wxEVT_TREE_SEL_CHANGED, [=](wxTreeEvent& event) {
+            wxTreeItemId itemId = event.GetItem();
+            wxString itemLabel = tree->GetItemText(itemId);
+            wxMessageBox("Selected: " + itemLabel, "Tree Selection", wxOK | wxICON_INFORMATION, this);
+        });
+        sizer->Add(tree, 1, wxEXPAND | wxALL, 5);
+        panel->SetSizer(sizer);
+        sizer->Fit(panel);
+        Show(true);
+    }
+};
+
+#include <wx/wx.h>
+class wxClickableLabel : public wxStaticText {
+    public:
+    wxClickableLabel(wxWindow* parent, const wxString& label)
+    : wxStaticText(parent, wxID_ANY, label, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER) {
+        SetBackgroundColour(*wxWHITE);
+        SetForegroundColour(*wxBLACK);
+        Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& event) {
+            wxString message = wxString::Format("Label '%s' clicked!", GetLabel());
+            wxMessageBox(message, "Label Info", wxOK | wxICON_INFORMATION, this);
+            event.Skip();
+        });
+    }
+};
+
+#include <wx/wx.h>
+#include <wx/radiobut.h>
+class wxRadioButtonFrame : public wxFrame {
+    public:
+    wxRadioButtonFrame() : wxFrame(nullptr, wxID_ANY, "Radio Button Example") {
+        auto panel = new wxPanel(this);
+        auto sizer = new wxBoxSizer(wxVERTICAL);
+        auto radio1 = new wxRadioButton(panel, wxID_ANY, "Option 1", wxPoint(10, 10));
+        auto radio2 = new wxRadioButton(panel, wxID_ANY, "Option 2", wxPoint(10, 40));
+        auto radio3 = new wxRadioButton(panel, wxID_ANY, "Option 3", wxPoint(10, 70));
+        radio1->SetValue(true);
+        sizer->Add(radio1, wxSizerFlags().Border(wxALL, 5));
+        sizer->Add(radio2, wxSizerFlags().Border(wxALL, 5));
+        sizer->Add(radio3, wxSizerFlags().Border(wxALL, 5));
+        panel->SetSizer(sizer);
+        radio1->Bind(wxEVT_RADIOBUTTON, [=](wxCommandEvent& event) {
+            wxMessageBox("Option 1 Selected!", "Info", wxOK | wxICON_INFORMATION, this);
+        });
+        radio2->Bind(wxEVT_RADIOBUTTON, [=](wxCommandEvent& event) {
+            wxMessageBox("Option 2 Selected!", "Info", wxOK | wxICON_INFORMATION, this);
+        });
+        radio3->Bind(wxEVT_RADIOBUTTON, [=](wxCommandEvent& event) {
+            wxMessageBox("Option 3 Selected!", "Info", wxOK | wxICON_INFORMATION, this);
+        });
+        SetClientSize(200, 150);
+        Show(true);
+    }
+};
+
+#include <wx/wx.h>
+class wxImageLabel : public wxStaticBitmap {
+    public:
+    wxImageLabel(wxWindow* parent, const wxBitmap& bitmap)
+    : wxStaticBitmap(parent, wxID_ANY, bitmap) {
+        Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent&) {
+            wxMessageBox("Image Clicked!", "Info", wxOK | wxICON_INFORMATION, this);
+        });
+    }
+};
+
+#include <wx/wx.h>
+class wxImageButtonFrame : public wxFrame {
+    public:
+    wxImageButtonFrame() : wxFrame(nullptr, wxID_ANY, "Image Button Example") {
+        auto sizer = new wxBoxSizer(wxHORIZONTAL);
+        auto imgBtn = new wxButton(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        imgBtn->SetBitmap(wxBitmap("path/to/image.png", wxBITMAP_TYPE_PNG));
+        imgBtn->Bind(wxEVT_BUTTON, [=](wxCommandEvent&) {
+            wxMessageBox("Image Button Clicked!", "Info", wxOK | wxICON_INFORMATION, this);
+        });
+        sizer->Add(imgBtn, wxSizerFlags().Border().Centre());
+        SetSizerAndFit(sizer);
+        Show(true);
+    }
+};
+
